@@ -12,12 +12,11 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connected to MongoDB')); 
 
 app.use(express.json());
-app.listen(port, () => console.log(`Server is running`));
 
 
 app.use('/api/auth',                 require('./routes/auth'));
 app.use('/api/friend-requests',      require('./routes/friendRequests'));
 app.use('/api/users',                require('./routes/users'));
 
-app.listen(port, () => console.log('🚀 Trivia Party on 3000'));
+app.listen(port, () => console.log(`Server is running`));
 
