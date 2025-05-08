@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth'); // Your authentication middleware
-const Game = require('../models/Game');   // Your Game model from Backend/models/Game.js
+const Game = require('../models/Games');   // Your Game model from Backend/models/Game.js
 
 /**
  * @route   GET /api/results/:gameCode

@@ -86,8 +86,7 @@ const GameSchema = new Schema({
     timestamps: true // Adds createdAt and updatedAt timestamps
 });
 
-// Index for faster querying by gameCode (already unique, but good for performance)
-GameSchema.index({ gameCode: 1 });
+
 // Index for finding active lobbies
 GameSchema.index({ status: 1, category: 1 });
 

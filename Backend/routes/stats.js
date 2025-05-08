@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth'); // Your authentication middleware
-const UserStats = require('../models/UserStats'); // The UserStats model
+const UserStats = require('../models/Stats'); // The UserStats model
 const User = require('../models/User');         // The User model
 
 /**

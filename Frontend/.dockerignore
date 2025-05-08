@@ -1,0 +1,7 @@
+# TRIVIAPARTY/Frontend/.dockerignore
+node_modules
+build
+npm-debug.log
+.env
+.env*.local
+.DS_Store

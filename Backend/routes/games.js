@@ -2,9 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth'); // Your authentication middleware
-const Game = require('../models/Game');     // Your Game model
+const Game = require('../models/Games');     // Your Game model
 const User = require('../models/User');     // Your User model
-const Question = require('../models/Question'); // Your Question model
+const Question = require('../models/Questions'); // Your Question model
 
 // Helper function to generate a unique game code
 function generateGameCode(length = 5) {

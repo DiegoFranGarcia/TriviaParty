@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth'); // Assuming fetching questions still requires a logged-in user
-const Question = require('../models/Question'); // Your Question model from Backend/models/Question.js
+const Question = require('../models/Questions'); // Your Question model from Backend/models/Question.js
 
 /**
  * @route   GET /api/questions
