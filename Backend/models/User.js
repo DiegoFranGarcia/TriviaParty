@@ -15,8 +15,8 @@ const UserSchema = new Schema({
     lowercase: true,
     trim: true
   },
-  // store a bcrypt (or similar) hash, never plain text
-  passwordHash: {
+  // Store plain text password(should be HASHED)
+  password: { 
     type: String,
     required: true
   },
