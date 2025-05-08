@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -15,13 +15,27 @@ const RegisterPage = () => {
     e.preventDefault();
     setError('');
 
-    try {
-      const response = await axios.post('/api/users/register', form);
-      console.log('Registration success:', response.data);
-      navigate('/login');
-    } catch (err) {
-      setError('Registration failed. Username might already be taken.');
-    }
+   try {
+  console.log('Sending request to backend with form data:', form); // Log the form data
+  const response = await axios.post('http://localhost:3001/api/auth/register', form);
+  console.log('Registration success:', response.data); // Log the success response
+  navigate('/login');
+} catch (err) {
+  console.error('Error occurred during registration:', err); // Log the full error object
+  if (err.response) {
+    // Log the response details if available
+    console.error('Error response data:', err.response.data);
+    console.error('Error response status:', err.response.status);
+    console.error('Error response headers:', err.response.headers);
+  } else if (err.request) {
+    // Log the request details if no response was received
+    console.error('Error request:', err.request);
+  } else {
+    // Log any other errors
+    console.error('Error message:', err.message);
+  }
+  setError('Registration failed. Username might already be taken.');
+}
   };
 
   return (
@@ -29,10 +43,10 @@ const RegisterPage = () => {
       <h2 className="text-2xl font-bold mb-4">Create Account</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
         <input
-          name="name"
+          name="username"
           type="text"
           placeholder="Username"
-          value={form.name}
+          value={form.username}
           onChange={handleChange}
           className="border p-2 rounded"
           required

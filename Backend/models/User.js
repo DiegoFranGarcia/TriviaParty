@@ -8,13 +8,6 @@ const UserSchema = new Schema({
     unique: true,
     trim: true
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
-  },
   // Store plain text password(should be HASHED)
   password: { 
     type: String,

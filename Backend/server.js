@@ -16,7 +16,30 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const express = require('express');
 const mongoose = require('mongoose');
 
+
+
 const app = express();
+
+const cors = require('cors');
+
+// Allow requests from http://localhost:3000
+// Allow requests from multiple origins dynamically
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // Allow cookies and authentication headers
+}));
+
 // Use the PORT from the environment file, or default to 3000
 const port = process.env.PORT || 3000;
 

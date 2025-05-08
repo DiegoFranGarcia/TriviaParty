@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -16,7 +16,7 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post('/api/users/login', form);
+      const response = await axios.post('http://localhost:3001/api/auth/login', form);
       console.log('Login success:', response.data);
       navigate('/');
     } catch (err) {
@@ -29,10 +29,10 @@ const LoginPage = () => {
       <h2 className="text-2xl font-bold mb-4">Login</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-sm">
         <input
-          name="name"
+          name="username"
           type="text"
           placeholder="Username"
-          value={form.name}
+          value={form.username}
           onChange={handleChange}
           className="border p-2 rounded"
           required
