@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
   withCredentials: true 
 });
 */
-const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api'; // Fallback for local dev outside Docker
+const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api'; // Fallback for local dev outside Docker
 
 console.log("Frontend API Base URL:", baseURL); // For debugging
 
