@@ -17,6 +17,11 @@ app.use(express.json());
 app.use('/api/auth',                 require('./routes/auth'));
 app.use('/api/friend-requests',      require('./routes/friendRequests'));
 app.use('/api/users',                require('./routes/users'));
+app.use('/api/games',                require('./routes/games'));
+app.use('/api/results',              require('./routes/results'));
+app.use('/api/stats',                require('./routes/stats'));
+app.use('/api/questions',            require('./routes/questions'));
+
 
 app.listen(port, () => console.log(`Server is running`));
 
