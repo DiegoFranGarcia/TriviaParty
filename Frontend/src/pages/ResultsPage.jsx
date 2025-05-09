@@ -3,17 +3,26 @@ import { useNavigate } from 'react-router-dom';
 
 const dummyResults = [
   { name: "TriviaFan", score: 42 },
-  { name: "HostPlayer", score: 38 },
   { name: "Guest_123", score: 30 },
   { name: "Newbie4", score: 20 }
 ];
 
 const ResultsPage = () => {
   const [rankings, setRankings] = useState([]);
+  const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const sorted = [...dummyResults].sort((a, b) => b.score - a.score);
+    const storedUsername = localStorage.getItem('displayName');
+    const storedScore = parseInt(localStorage.getItem('lastScore'), 10) || 0;
+
+    setUsername(storedUsername || '');
+
+    const resultsWithHost = storedUsername
+      ? [...dummyResults, { name: storedUsername, score: storedScore }]
+      : dummyResults;
+
+    const sorted = resultsWithHost.sort((a, b) => b.score - a.score);
     setRankings(sorted);
   }, []);
 
@@ -25,6 +34,7 @@ const ResultsPage = () => {
         {rankings.map((player, index) => {
           const medal =
             index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "🎖️";
+          const isYou = player.name === username;
 
           return (
             <div
@@ -40,7 +50,7 @@ const ResultsPage = () => {
               }`}
             >
               <span className="text-xl font-semibold">
-                {medal} {player.name}
+                {medal} {player.name} {isYou && <span className="text-sm text-blue-600">(You)</span>}
               </span>
               <span className="text-lg font-mono">{player.score} pts</span>
             </div>

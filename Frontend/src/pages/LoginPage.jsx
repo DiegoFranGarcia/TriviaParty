@@ -17,6 +17,13 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post('http://localhost:3001/api/auth/login', form);
+
+      const { token, username } = response.data;
+
+      // Store token and username
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+
       console.log('Login success:', response.data);
       navigate('/');
     } catch (err) {

@@ -1,47 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-
-const generateQuestions = (category) => {
-  return Array.from({ length: 50 }, (_, i) => ({
-    id: `${category}-${i}`,
-    question: `Question ${i + 1} for ${category}?`,
-    correct: "Correct Answer",
-    choices: shuffle([
-      "Correct Answer",
-      "Wrong Option A",
-      "Wrong Option B",
-      "Wrong Option C"
-    ])
-  }));
-};
-
-const shuffle = (array) => {
-  const a = [...array];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import axios from '../api/axiosConfig';
 
 const GamePage = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
-  const categories = ["General", "History", "Science", "Pop Culture"];
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const selectedCategory = queryParams.get('category') || 'Sports';
 
-  // Change category here to simulate fetching from backend
-  const [selectedCategory] = useState("General");
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0);
 
   useEffect(() => {
-    const qPool = generateQuestions(selectedCategory);
-    setQuestions(qPool);
+    const fetchQuestions = async () => {
+      try {
+        const res = await axios.get(`/questions?category=${encodeURIComponent(selectedCategory)}&limit=10`);
+        const formatted = res.data.map((q, i) => ({
+          id: i,
+          question: q.text,
+          correct: q.correctAnswer,
+          choices: shuffle([q.correctAnswer, ...q.choices.filter(c => c !== q.correctAnswer)])
+        }));
+        setQuestions(formatted);
+      } catch (err) {
+        console.error('Failed to fetch questions', err);
+      }
+    };
+
+    fetchQuestions();
   }, [selectedCategory]);
+
+  const shuffle = (array) => {
+    const a = [...array];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
 
   const handleAnswer = (answer) => {
     setSelectedAnswer(answer);
+    if (answer === questions[currentIndex].correct) {
+      setCorrectCount((prev) => prev + 1);
+    }
   };
 
   const handleNext = () => {
@@ -49,51 +54,50 @@ const GamePage = () => {
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex(currentIndex + 1);
     } else {
+      const finalScore = correctCount * 10; // 10 points per correct answer
+      localStorage.setItem('lastScore', finalScore);
       navigate('/results');
     }
   };
 
-  if (questions.length === 0) return <p className="p-6">Loading questions...</p>;
+  if (questions.length === 0) {
+    return <div className="p-8 text-center">Loading questions for {selectedCategory}...</div>;
+  }
 
-  const currentQ = questions[currentIndex];
+  const current = questions[currentIndex];
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">
-        Game #{gameId} – {selectedCategory} Category
-      </h1>
-      <h2 className="text-lg mb-2 font-medium">
-        Question {currentIndex + 1} of {questions.length}
-      </h2>
-      <p className="mb-6">{currentQ.question}</p>
-      <div className="grid grid-cols-1 gap-3">
-        {currentQ.choices.map((choice, i) => (
+    <div className="p-8 max-w-xl mx-auto">
+      <h2 className="text-xl font-semibold mb-4">Question {currentIndex + 1} of {questions.length}</h2>
+      <p className="text-lg mb-6">{current.question}</p>
+      <div className="space-y-4 mb-6">
+        {current.choices.map((choice, idx) => (
           <button
-            key={i}
-            onClick={() => handleAnswer(choice)}
-            className={`py-2 px-4 rounded border ${
+            key={idx}
+            className={`block w-full px-4 py-2 rounded border ${
               selectedAnswer === choice
-                ? choice === currentQ.correct
-                  ? "bg-green-300 border-green-700"
-                  : "bg-red-300 border-red-700"
-                : "bg-white hover:bg-gray-100"
+                ? choice === current.correct
+                  ? 'bg-green-200 border-green-600'
+                  : 'bg-red-200 border-red-600'
+                : 'bg-white hover:bg-gray-100'
             }`}
-            disabled={selectedAnswer !== null}
+            onClick={() => handleAnswer(choice)}
+            disabled={!!selectedAnswer}
           >
             {choice}
           </button>
         ))}
       </div>
-      {selectedAnswer && (
-        <div className="mt-6 text-center">
+      <div className="flex justify-end">
+        {selectedAnswer && (
           <button
             onClick={handleNext}
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
           >
-            {currentIndex + 1 === questions.length ? "See Results" : "Next Question"}
+            {currentIndex + 1 < questions.length ? 'Next' : 'See Results'}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
