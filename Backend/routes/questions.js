@@ -4,8 +4,8 @@ const auth = require('../middleware/auth');
 const Question = require('../models/Questions');
 const Category = require('../models/Category');
 
-// 🟢 GET /api/questions - Fetch questions from a specific category
-router.get('/', async (req, res) => {
+// GET /api/questions - Fetch questions by category
+router.get('/', auth, async (req, res) => {
   const { category, limit } = req.query;
 
   if (!category) {
@@ -28,14 +28,56 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 🟢 GET /api/questions/categories - Fetch category names
+// GET /api/questions/categories - Fetch all category names
 router.get('/categories', async (req, res) => {
-  console.log('🟢 /api/questions/categories was hit'); // debug log
   try {
     const categories = await Category.find({}, 'name');
     res.json(categories.map(c => c.name));
   } catch (err) {
     res.status(500).json({ msg: 'Failed to fetch categories', error: err.message });
+  }
+});
+
+// POST /api/questions - Add a new category with questions
+router.post('/', async (req, res) => {
+  const { name, questions } = req.body;
+
+  if (!name || !Array.isArray(questions)) {
+    return res.status(400).json({ error: 'Category name and questions array are required.' });
+  }
+
+  try {
+    const existing = await Category.findOne({ name });
+    if (existing) {
+      return res.status(400).json({ error: 'Category already exists.' });
+    }
+
+    const category = new Category({ name, questions });
+    await category.save();
+
+    res.status(201).json({ message: 'Category added', category });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create category', detail: err.message });
+  }
+});
+
+// PUT /api/questions/:category/:index - Update question in category
+router.put('/:category/:index', async (req, res) => {
+  const { category, index } = req.params;
+  const { text, choices, correctAnswer } = req.body;
+
+  try {
+    const doc = await Category.findOne({ name: category });
+    if (!doc || !doc.questions[index]) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    doc.questions[index] = { text, choices, correctAnswer };
+    await doc.save();
+
+    res.json({ message: 'Question updated', question: doc.questions[index] });
+  } catch (err) {
+    res.status(500).json({ error: 'Update failed', detail: err.message });
   }
 });
 

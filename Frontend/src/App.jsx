@@ -8,6 +8,7 @@ import GameLobbyPage from "./pages/GameLobbyPage";
 import GamePage from "./pages/GamePage";
 import ResultsPage from "./pages/ResultsPage";
 import StatsPage from "./pages/StatsPage";
+import AddQuestionsPage from './pages/AddQuestionsPage';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/play/:gameId" element={<GamePage />} />
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/stats/:userId" element={<StatsPage />} />
+        <Route path="/manage-questions" element={<AddQuestionsPage />} />
       </Routes>
     </Router>
   );
