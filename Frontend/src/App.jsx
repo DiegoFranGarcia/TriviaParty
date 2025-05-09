@@ -14,10 +14,10 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage />} /> {/* ✅ Login is now default */}
+        <Route path="/home" element={<HomePage />} /> {/* ✅ Home moved */}
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/game/:gameId" element={<GameLobbyPage />} />
+        <Route path="/lobby/:gameId" element={<GameLobbyPage />} />
         <Route path="/play/:gameId" element={<GamePage />} />
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/stats/:userId" element={<StatsPage />} />

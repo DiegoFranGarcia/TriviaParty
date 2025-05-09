@@ -58,7 +58,7 @@ const AddQuestionsPage = () => {
         alert('✅ Questions updated!');
       }
 
-      navigate('/');
+      navigate('/home')
     } catch (err) {
       alert('Something went wrong. Please try again.');
       console.error(err);

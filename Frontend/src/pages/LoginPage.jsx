@@ -25,7 +25,7 @@ const LoginPage = () => {
       localStorage.setItem('username', username);
 
       console.log('Login success:', response.data);
-      navigate('/');
+      navigate('/home')
     } catch (err) {
       setError('Invalid credentials. Please try again.');
     }
