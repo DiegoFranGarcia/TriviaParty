@@ -18,6 +18,7 @@ const GamePage = () => {
     const fetchQuestions = async () => {
       try {
         const res = await axios.get(`/questions?category=${encodeURIComponent(selectedCategory)}&limit=10`);
+        if (res.data.length === 0) throw new Error("No questions found.");
         const formatted = res.data.map((q, i) => ({
           id: i,
           question: q.text,
@@ -27,6 +28,8 @@ const GamePage = () => {
         setQuestions(formatted);
       } catch (err) {
         console.error('Failed to fetch questions', err);
+        alert("Could not load questions for this category.");
+        navigate('/home');
       }
     };
 
@@ -54,8 +57,7 @@ const GamePage = () => {
     if (currentIndex + 1 < questions.length) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      const finalScore = correctCount * 10; // 10 points per correct answer
-      localStorage.setItem('lastScore', finalScore);
+      localStorage.setItem('lastScore', correctCount * 10);
       navigate('/results');
     }
   };

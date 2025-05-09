@@ -11,12 +11,17 @@ const AddQuestionsPage = () => {
   const [questions, setQuestions] = useState([
     { text: '', choices: ['', '', '', ''], correctAnswer: '' }
   ]);
+  const [categoryToDelete, setCategoryToDelete] = useState('');
 
   useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = () => {
     axios.get('/questions/categories')
       .then(res => setCategories(res.data))
       .catch(err => console.error('Failed to load categories', err));
-  }, []);
+  };
 
   const handleQuestionChange = (index, field, value) => {
     const updated = [...questions];
@@ -41,11 +46,23 @@ const AddQuestionsPage = () => {
 
   const handleSubmit = async () => {
     try {
+      for (const q of questions) {
+        if (
+          !q.text.trim() ||
+          q.choices.some(choice => !choice.trim()) ||
+          !q.choices.includes(q.correctAnswer)
+        ) {
+          alert('Please complete all fields and select a correct answer.');
+          return;
+        }
+      }
+
       if (isNewCategory) {
         if (!newCategoryName.trim()) {
           alert('Please enter a name for the new category.');
           return;
         }
+
         await axios.post('/questions', {
           name: newCategoryName,
           questions
@@ -58,9 +75,29 @@ const AddQuestionsPage = () => {
         alert('✅ Questions updated!');
       }
 
-      navigate('/home')
+      navigate('/home');
     } catch (err) {
       alert('Something went wrong. Please try again.');
+      console.error(err);
+    }
+  };
+
+  const handleDeleteCategory = async () => {
+    if (!categoryToDelete) {
+      alert('Please select a category to delete.');
+      return;
+    }
+
+    const confirm = window.confirm(`Are you sure you want to delete '${categoryToDelete}'?`);
+    if (!confirm) return;
+
+    try {
+      await axios.delete(`/questions/${encodeURIComponent(categoryToDelete)}`);
+      alert(`Category '${categoryToDelete}' deleted.`);
+      setCategoryToDelete('');
+      fetchCategories();
+    } catch (err) {
+      alert('Failed to delete category.');
       console.error(err);
     }
   };
@@ -154,6 +191,28 @@ const AddQuestionsPage = () => {
           onClick={handleSubmit}
         >
           Save
+        </button>
+      </div>
+
+      <hr className="my-8" />
+
+      <h2 className="text-xl font-bold mb-2">🗑️ Delete Category</h2>
+      <div className="flex items-center gap-4">
+        <select
+          className="border rounded p-2"
+          value={categoryToDelete}
+          onChange={(e) => setCategoryToDelete(e.target.value)}
+        >
+          <option value="">-- Select Category to Delete --</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+        <button
+          onClick={handleDeleteCategory}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Delete Category
         </button>
       </div>
     </div>

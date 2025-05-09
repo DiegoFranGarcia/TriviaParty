@@ -4,8 +4,8 @@ const auth = require('../middleware/auth');
 const Question = require('../models/Questions');
 const Category = require('../models/Category');
 
-// GET /api/questions - Fetch questions by category
-router.get('/', auth, async (req, res) => {
+// GET /api/questions - Fetch questions by category (no auth required)
+router.get('/', async (req, res) => {
   const { category, limit } = req.query;
 
   if (!category) {
@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT /api/questions/:category/:index - Update question in category
+// PUT /api/questions/:category/:index - Update a question in a category
 router.put('/:category/:index', async (req, res) => {
   const { category, index } = req.params;
   const { text, choices, correctAnswer } = req.body;
@@ -80,5 +80,21 @@ router.put('/:category/:index', async (req, res) => {
     res.status(500).json({ error: 'Update failed', detail: err.message });
   }
 });
+
+// DELETE /api/questions/:category - Removing a category and its questions
+router.delete('/:category', async (req, res) => {
+    const { category } = req.params;
+  
+    try {
+      const deleted = await Category.findOneAndDelete({ name: category });
+      if (!deleted) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
+  
+      res.json({ message: `Category '${category}' deleted successfully.` });
+    } catch (err) {
+      res.status(500).json({ error: 'Delete failed', detail: err.message });
+    }
+  });  
 
 module.exports = router;

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const dummyResults = [
-  { name: "TriviaFan", score: 42 },
-  { name: "Guest_123", score: 30 },
-  { name: "Newbie4", score: 20 }
+  { name: "TriviaFan1", score: 40 },
+  { name: "Guest123", score: 30 },
+  { name: "Guest1234", score: 20 }
 ];
 
 const ResultsPage = () => {
