@@ -14,9 +14,12 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} /> {/* ✅ Login is now default */}
-        <Route path="/home" element={<HomePage />} /> {/* ✅ Home moved */}
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} /> 
+
+        {/* Nav routes */}
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/lobby/:gameId" element={<GameLobbyPage />} />
         <Route path="/play/:gameId" element={<GamePage />} />
         <Route path="/results" element={<ResultsPage />} />
